@@ -1,0 +1,39 @@
+body {
+    background-color: rgb(20, 20, 22);
+}
+
+.manga-area {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.manga-image {
+    max-height: 100vh;
+    max-width: 100vw;
+    min-width: 0;
+    object-fit: contain;
+    height: auto;
+    width: auto;
+}
+
+.m-center {
+    object-position: center center;
+}
+
+.m-right {
+    object-position: right center;
+}
+
+.m-left {
+    object-position: left center;
+}
+
+.m-hidden {
+    display: none;
+}
+
+span {
+    color: white
+}

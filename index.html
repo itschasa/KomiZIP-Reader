@@ -18,10 +18,19 @@
         <div class="row m-0 w-100 text-center mb-2 header">
             <div class="col-12 mb-3">
                 <a href="https://komi.zip/" target="_blank">
-                    <img src="logo.png" class="logo-img">
+                    <img src="logo.png" class="logo-img" alt="komi.zip logo">
                 </a>
                 <br>
-                <span class="text" id="chapter-span" style="font-size: 15px">Chapter ...</span>
+                <span class="text" id="chapter-span" style="font-size: 15px; color:#d9bdf7;">Chapter ...</span>
+                <span class="text-muted">-</span>
+                <span onclick="toggleHelp()" style="cursor: pointer; color: rgb(213, 248, 255)" id="info-span">How to Use</span>
+            </div>
+            <div class="col-12 m-hidden mb-4" id="info-div">
+                <span class="text">
+                    To change page, either use the arrow keys, or click/tap on the left or right side of the page.<br>
+                    Settings can be changed below this to change how the chapter is displayed.<br>
+                    (Offset Page can only be used with Double Page enabled)
+                </span>
             </div>
             <div class="col">
                 <div class="setting-disabled m-1" setting="rtl" onclick="toggleSetting('rtl')">

@@ -307,6 +307,16 @@ const init = function() {
         });
 }
 
+const toggleHelp = function() {
+    if ($('#info-span').html() == "How to Use") {
+        $('#info-span').html("Close Help")
+        $('#info-div').removeClass("m-hidden")
+    } else {
+        $('#info-span').html("How to Use")
+        $('#info-div').addClass("m-hidden")
+    }
+}
+
 $(document).keydown(arrowKeyTrigger)
 $(window).resize(updateProgress)
 

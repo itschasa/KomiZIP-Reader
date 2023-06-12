@@ -14,19 +14,23 @@
     <body>
         <div class="row m-0 w-100 text-center mb-2" style="background-color: rgb(59, 59, 61);">
             <div class="col">
-                <span class="setting-disabled" id="setting-rtl">Right to Left</span>
+                <div class="setting-disabled" setting="rtl" onclick="toggleSetting('rtl')">
+                    <span>Right to Left</span>
+                </div>
             </div>
             <div class="col">
-                <span class="setting-disabled" id="setting-dp">Double Page</span>
+                <div class="setting-disabled" setting="dp" onclick="toggleSetting('dp')">
+                    <span>Double Page</span>
+                </div>
             </div>
             <div class="col">
-                <span class="setting-disabled" id="setting-op">Offset Page</span>
+                <div class="setting-notallowed" setting="op" onclick="toggleSetting('op')">
+                    <span>Offset Page</span>
+                </div>
             </div>
         </div>
 
-        <div class="manga-area">
-            <!--<img src="imgs/komi-403-03.jpg" page-id="3" class="manga-image">-->
-        </div>
+        <div class="manga-area"></div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

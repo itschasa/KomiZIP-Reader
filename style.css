@@ -18,24 +18,8 @@ body {
     width: auto;
 }
 
-.m-center {
-    object-position: center center;
-}
-
-.m-right {
-    object-position: right center;
-}
-
-.m-left {
-    object-position: left center;
-}
-
 .m-hidden {
     display: none;
-}
-
-span {
-    color: white
 }
 
 .setting-enabled {
@@ -45,3 +29,11 @@ span {
 .setting-disabled {
     color: gray!important;
 }
+
+.setting-notallowed {
+    color: black!important
+}
+
+div[onclick] {
+    cursor: pointer;
+  }

@@ -297,7 +297,13 @@ const init = function() {
             
         })
         .catch(error => {
-            console.error('Error occurred during the request:', error);
+            if (error.response.status) {
+                alert("Chapter was not found.")
+                window.location.href = "https://komi.zip/"
+            } else {
+                alert("Failed to load chapter, view console for more info.")
+                console.error('Error occurred during the request:', error);
+            }
         });
 }
 

@@ -77,11 +77,7 @@ const isImageOnLeft = function(pagenum) {
 
 const changePage = function(direction) {
     if (settings.DoublePageView.enabled) {
-        if (settings.DoublePageView.offsetPage && chapter_data.current == 1) {
-            change = 1
-        } else {
-            change = 2
-        }
+        change = 2
     } else {
         change = 1
     }
@@ -97,7 +93,6 @@ const changePage = function(direction) {
             chapter_data.current = 1
         }
     }
-    console.log(direction, change, chapter_data.current)
     updatePages()
 }
 
@@ -115,12 +110,11 @@ const updatePages = function() {
         if (!settings.DoublePageView.offsetPage) {
             selectPage(chapter_data.current + 1).removeClass('m-hidden')
             allowed_pages.push(chapter_data.current + 1)
-        } else if (chapter_data.current != 1) {
-            selectPage(chapter_data.current + 1).removeClass('m-hidden')
-            allowed_pages.push(chapter_data.current + 1)
+        } else {
+            selectPage(chapter_data.current - 1).removeClass('m-hidden')
+            allowed_pages.push(chapter_data.current - 1)
         }
     }
-
 
     var all_pages = $('.manga-area img');
     for (var i = 0; i < all_pages.length; i++) {
@@ -128,6 +122,7 @@ const updatePages = function() {
             all_pages.eq(i).addClass("m-hidden");
         }
     }
+    updateProgress()
 }
 
 const toggleSetting = function(input) {
@@ -166,8 +161,9 @@ const toggleSetting = function(input) {
             $('div[setting="op"]').addClass("setting-enabled").removeClass("setting-disabled").removeClass("setting-notallowed")
         }
     
-    } else if (input == "forceUpdate") {
+    } else if (input == "startup") {
         if (settings.RightToLeft.enabled) {
+            $('.manga-area').append($('.manga-area img').get().reverse());
             $('div[setting="rtl"]').addClass("setting-enabled").removeClass("setting-disabled")
         } else {
             $('div[setting="rtl"]').addClass("setting-disabled").removeClass("setting-enabled")
@@ -184,19 +180,103 @@ const toggleSetting = function(input) {
             $('div[setting="dp"]').addClass("setting-disabled").removeClass("setting-enabled")
             $('div[setting="op"]').addClass("setting-notallowed").removeClass("setting-disabled").removeClass("setting-enabled")
         }
-
-        if (settings.DoublePageView.offsetPage) {
-            $('div[setting="op"]').addClass("setting-enabled").removeClass("setting-disabled").removeClass("setting-notallowed")
-        } else {
-            $('div[setting="op"]').addClass("setting-disabled").removeClass("setting-enabled").removeClass("setting-notallowed")
-        }
     }
     
     updatePages()
     localStorage.setItem('view_settings', JSON.stringify(settings))
 }
 
+const updateProgress = function() {
+    var page_value = 100 / chapter_data.page_count
+    var pages = $('.manga-area img:not(.m-hidden)')
+    var pages_visible = []
+    for (var i = 0; i < pages.length; i++) {
+        pages_visible.push(parseInt(pages.eq(i).attr("page")))
+    }
+    
+    pages_visible = pages_visible.sort((a, b) => a - b)
+    if (pages_visible.length == 1) {
+        $('.m-progress-bar-text').text(pages_visible[0])
+        var offset_minus = 1
+        var page_length = 1
+    } else {
+        $('.m-progress-bar-text').text(`${pages_visible[0]}-${pages_visible[1]}`)
+        var offset_minus = 1.5
+        var page_length = 2
+    }
+    
+    if (pages_visible[pages_visible.length - 1] == chapter_data.page_count) {
+        var percentage = 100
+    } else {
+        var percentage = pages_visible[pages_visible.length - 1] * page_value
+    }
+
+    var text_offset = Math.min(
+        (
+            ($(document).width() / chapter_data.page_count) * (pages_visible[pages_visible.length - 1] - offset_minus)
+        ) + 
+        (
+            (($(document).width() / chapter_data.page_count) - $('.m-progress-bar-text').width()) / 2
+        ),
+        
+        $(document).width() - $('.m-progress-bar-text').width() - 5
+    )
+
+    if (settings.RightToLeft.enabled) {
+        $("#progress").width(`${percentage}%`).css('margin-left',`${100-percentage}%`)
+        $('.m-progress-bar-text').css({
+            'margin-left': '0%',
+            'margin-right': `${text_offset}px`,
+            'text-align': 'right',
+            'float': 'right',
+        })
+        $('#highlight').css({
+            'width': `${($(document).width() / chapter_data.page_count) * page_length}px`,
+            'margin-left': `${($(document).width() / chapter_data.page_count) * (chapter_data.page_count - pages_visible[pages_visible.length - 1])}px`,
+            'text-align': 'right',
+            'float': 'right',
+        })
+    } else {
+        $("#progress").width(`${percentage}%`).css('margin-left','0%')
+        $('.m-progress-bar-text').css({
+            'margin-left': `${text_offset}px`,
+            'margin-right': '0%',
+            'text-align': 'left',
+            'float': 'left',
+        })
+        $('#highlight').css({
+            'width': `${($(document).width() / chapter_data.page_count) * page_length}px`,
+            'margin-left': `${$(document).width() - ($(document).width() / chapter_data.page_count) * (chapter_data.page_count - pages_visible[pages_visible.length - 1] + page_length)}px`,
+            'text-align': 'left',
+            'float': 'left',
+        })
+    }
+}
+
+const arrowKeyTrigger = function(e) {
+    e = e || window.event;
+
+    if (e.keyCode == '37') {
+        // left arrow
+        if (settings.RightToLeft.enabled) {
+            changePage('+')
+        } else {
+            changePage('-')
+        }
+    }
+    else if (e.keyCode == '39') {
+        // right arrow
+        if (settings.RightToLeft.enabled) {
+            changePage('-')
+        } else {
+            changePage('+')
+        }
+    }
+}
+
 const init = function() {
+    $('#chapter-span').text(`Chapter `)
+    document.title = `Chapter ${chapter_data.id} | komi.zip`
     axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}-01.jpg`)
         .then(response => {
             chapter_data.page_count = parseInt(response.headers['x-page-count']);
@@ -212,7 +292,7 @@ const init = function() {
             }
 
             chapter_data.current = 1
-            toggleSetting("forceUpdate")
+            toggleSetting("startup")
             updatePages()
             
         })
@@ -220,5 +300,8 @@ const init = function() {
             console.error('Error occurred during the request:', error);
         });
 }
+
+$(document).keydown(arrowKeyTrigger)
+$(window).resize(updateProgress)
 
 init()

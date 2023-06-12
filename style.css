@@ -37,3 +37,11 @@ body {
 span {
     color: white
 }
+
+.setting-enabled {
+    color: white!important
+}
+
+.setting-disabled {
+    color: gray!important;
+}

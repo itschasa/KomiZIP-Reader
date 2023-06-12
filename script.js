@@ -64,14 +64,31 @@ const handlePageClick = function(event){
     }
 }
 
-const loadImageCount = function() {
+const addLeadingZero = function(number) {
+    if (number < 10) {
+        return "0" + number.toString();
+    } else {
+        return number.toString();
+    }
+  }
+
+const init = function() {
     axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}-01.jpg`)
-    .then(response => {
-        chapter_data.page_count = parseInt(response.headers['x-page-count']);
-    })
-    .catch(error => {
-        console.error('Error occurred during the request:', error);
-    });
+        .then(response => {
+            chapter_data.page_count = parseInt(response.headers['x-page-count']);
+            
+            for (let i = 1; i <= chapter_data.page_count; i++) {
+                var imgElement = $('<img>');
+                var imgID = addLeadingZero(i)
+                imgElement.attr('src', `https://cdn.komi.zip/cdn/${chapter_data.id}-${imgID}.jpg`);
+                imgElement.attr('class', 'manga-image m-hidden')
+                $('.manga-area').append(imgElement);
+            }
+            
+        })
+        .catch(error => {
+            console.error('Error occurred during the request:', error);
+        });
 }
 
 
@@ -81,4 +98,4 @@ for (var i = 0; i < mangaImages.length; i++) {
   mangaImages[i].addEventListener("click", handlePageClick);
 }
 
-loadImageCount()
+init()

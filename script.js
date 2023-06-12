@@ -26,7 +26,7 @@ const handlePageClick = function(event){
         quarter_width = event.target.clientWidth / 4
         
         if (settings.DoublePageView.current) {
-            if (event.target.classList.contains('m-right')) {
+            if (!isImageOnLeft(event.target.classList['page'])) {
                 if (event.offsetX > quarter_width * 3) {
                     if (settings.LeftToRight) {
                         changePage("-")
@@ -70,7 +70,16 @@ const addLeadingZero = function(number) {
     } else {
         return number.toString();
     }
-  }
+}
+
+const reverseImageOrder = function() {
+    $('.manga-area').append($('.manga-area img').get().reverse());
+}
+
+function isImageOnLeft(pagenum) {
+    const imgElements = $('.manga-area img:not(.m-hidden)');
+    return imgElements.index(`[page="${pagenum}"]`) == 0
+}
 
 const init = function() {
     axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}-01.jpg`)
@@ -82,6 +91,8 @@ const init = function() {
                 var imgID = addLeadingZero(i)
                 imgElement.attr('src', `https://cdn.komi.zip/cdn/${chapter_data.id}-${imgID}.jpg`);
                 imgElement.attr('class', 'manga-image m-hidden')
+                imgElement.on('click', handlePageClick)
+                imgElement.attr('page', i)
                 $('.manga-area').append(imgElement);
             }
             
@@ -89,13 +100,6 @@ const init = function() {
         .catch(error => {
             console.error('Error occurred during the request:', error);
         });
-}
-
-
-
-var mangaImages = document.getElementsByClassName("manga-image");
-for (var i = 0; i < mangaImages.length; i++) {
-  mangaImages[i].addEventListener("click", handlePageClick);
 }
 
 init()

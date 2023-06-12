@@ -15,7 +15,7 @@ if (settings == "" || settings._version != settings_version) {
 }
 
 var chapter_data = {
-    id: window.location.href.split('?')[1],
+    id: window.location.pathname.split('/')[1],
     page_count: null,
     pages: {},
     current: null

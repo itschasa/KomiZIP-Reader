@@ -275,7 +275,7 @@ const arrowKeyTrigger = function(e) {
 }
 
 const init = function() {
-    $('#chapter-span').text(`Chapter `)
+    $('#chapter-span').text(`Chapter ${chapter_data.id}`)
     document.title = `Chapter ${chapter_data.id} | komi.zip`
     axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}-01.jpg`)
         .then(response => {

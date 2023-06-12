@@ -21,6 +21,11 @@ var chapter_data = {
     current: null
 }
 
+if (chapter_data.id == undefined) {
+    alert("You need to add a chapter number after the /")
+    window.location.href = 'https://komi.zip/'
+}
+
 const handlePageClick = function(event){
     if (!event.target.classList.contains('m-hidden')) {
         

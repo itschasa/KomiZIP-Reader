@@ -5,11 +5,11 @@ if (settings == "" || settings._version != settings_version) {
     var settings = {
         _version: settings_version,
         RightToLeft: {
-            enabled: false
+            enabled: true
         },
         DoublePageView: {
-            enabled: false,
-            offsetPage: false
+            enabled: true,
+            offsetPage: true
         }
     }
 }
@@ -90,6 +90,8 @@ const changePage = function(direction) {
     if (direction == "+") {
         if (chapter_data.page_count >= chapter_data.current + change) {
             chapter_data.current += change
+        } else {
+            chapter_data.current = chapter_data.page_count
         }
     } else {
         if (chapter_data.current - change > 0) {
@@ -113,11 +115,24 @@ const updatePages = function() {
     
     if (settings.DoublePageView.enabled) {
         if (!settings.DoublePageView.offsetPage) {
-            selectPage(chapter_data.current + 1).removeClass('m-hidden')
-            allowed_pages.push(chapter_data.current + 1)
+            if (chapter_data.current % 2 === 0) {
+                selectPage(chapter_data.current - 1).removeClass('m-hidden')
+                allowed_pages.push(chapter_data.current - 1)
+            } else {
+                selectPage(chapter_data.current + 1).removeClass('m-hidden')
+                allowed_pages.push(chapter_data.current + 1)
+            }
         } else {
-            selectPage(chapter_data.current - 1).removeClass('m-hidden')
-            allowed_pages.push(chapter_data.current - 1)
+            if (chapter_data.current !== 1) {
+                if (chapter_data.current % 2 === 0) {
+                    selectPage(chapter_data.current + 1).removeClass('m-hidden')
+                    allowed_pages.push(chapter_data.current + 1)
+                } else {
+                    selectPage(chapter_data.current - 1).removeClass('m-hidden')
+                    allowed_pages.push(chapter_data.current - 1)
+                }
+            }
+            
         }
     }
 

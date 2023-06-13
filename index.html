@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
         
         <link href="style.css" rel="stylesheet">
 
@@ -32,18 +32,24 @@
                     (Offset Page can only be used with Double Page enabled)
                 </span>
             </div>
-            <div class="col">
+            <div class="col mb-2">
                 <div class="setting-disabled m-1" setting="rtl" onclick="toggleSetting('rtl')">
+                    <i data-feather="arrow-left-circle"></i>
+                    <br>
                     <span>Right to Left</span>
                 </div>
             </div>
             <div class="col">
                 <div class="setting-disabled m-1" setting="dp" onclick="toggleSetting('dp')">
+                    <i data-feather="book-open"></i>
+                    <br>
                     <span>Double Page</span>
                 </div>
             </div>
             <div class="col">
                 <div class="setting-notallowed m-1" setting="op" onclick="toggleSetting('op')">
+                    <i data-feather="scissors"></i>
+                    <br>
                     <span>Offset Page</span>
                 </div>
             </div>
@@ -62,6 +68,7 @@
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
         <script src="script.js"></script>
 
     </body>

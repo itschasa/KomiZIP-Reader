@@ -1,3 +1,5 @@
+feather.replace()
+
 const settings_version = 'v1'
 
 var settings = localStorage.getItem('view_settings') ? JSON.parse(localStorage.getItem('view_settings')) : '';

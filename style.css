@@ -79,3 +79,23 @@ div[onclick] {
 .m-progress-bar-active {
     border-bottom: 2px solid #6840ff;
 }
+
+.arrow-left {
+    position: fixed;
+    bottom: 50%;
+    left: 2%;
+    color: rgb(231, 231, 231)
+}
+
+.arrow-right {
+    position: fixed;
+    bottom: 50%;
+    right: 2%;
+    color: rgb(231, 231, 231)
+}
+
+@media (max-width:641px) {
+    .arrow-hide {
+        display: none;
+    }
+}

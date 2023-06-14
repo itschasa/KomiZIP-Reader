@@ -25,7 +25,7 @@ var chapter_data = {
 
 if (chapter_data.id == undefined) {
     alert("You need to add a chapter number after the /")
-    window.location.href = 'https://komi.zip/'
+    //window.location.href = 'https://komi.zip/'
 }
 
 const handlePageClick = function(event){
@@ -296,6 +296,22 @@ const arrowKeyTrigger = function(e) {
     }
 }
 
+const arrowClick = function(arrow) {
+    if (arrow == 'l') {
+        if (settings.RightToLeft.enabled) {
+            changePage('+')
+        } else {
+            changePage('-')
+        }
+    } else {
+        if (settings.RightToLeft.enabled) {
+            changePage('-')
+        } else {
+            changePage('+')
+        }
+    }
+}
+
 const init = function() {
     $('#chapter-span').text(`Chapter ${chapter_data.id}`)
     document.title = `Chapter ${chapter_data.id} | komi.zip`
@@ -321,7 +337,7 @@ const init = function() {
         .catch(error => {
             if (error.response.status) {
                 alert("Chapter was not found.")
-                window.location.href = "https://komi.zip/"
+                //window.location.href = "https://komi.zip/"
             } else {
                 alert("Failed to load chapter, view console for more info.")
                 console.error('Error occurred during the request:', error);

@@ -57,13 +57,16 @@
 
         <div class="manga-area"></div>
         
-        <div class="m-progress-bar w-100">
-            <span class="text m-progress-bar-text"></span>
-        </div>
         <div class="m-progress-bar m-progress-bar-shadow w-100">
             <div class="m-progress-bar m-progress-bar-active" id="progress"></div>
             <div class="m-progress-bar m-progress-bar-highlight" id="highlight"></div>
         </div>
+        <div class="m-progress-bar w-100">
+            <span class="text m-progress-bar-text"></span>
+        </div>
+
+        <i onclick="arrowClick('l')" height="5vh" width="5vh" class="arrow-left arrow-hide" data-feather="arrow-left"></i>
+        <i onclick="arrowClick('r')" height="5vh" width="5vh" class="arrow-right arrow-hide" data-feather="arrow-right"></i>
 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>

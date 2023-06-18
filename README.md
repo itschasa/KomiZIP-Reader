@@ -1,5 +1,5 @@
 # KomiZIP-Reader
-Simple HTML Manga Reader, designed for komi.zip
+Simple HTML Manga Reader, designed for komi.zip. Automatically deployed to Cloudflare Pages.
 
 ### All repositories:
 [Backend](https://github.com/itschasa/KomiZIP-Backend) | [Home](https://github.com/itschasa/KomiZIP-Home) | [Reader](https://github.com/itschasa/KomiZIP-Reader)

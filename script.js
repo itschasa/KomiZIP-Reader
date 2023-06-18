@@ -1,70 +1,42 @@
-feather.replace()
-
 const settings_version = 'v1'
-
-var settings = localStorage.getItem('view_settings') ? JSON.parse(localStorage.getItem('view_settings')) : '';
-if (settings == "" || settings._version != settings_version) {
-    var settings = {
-        _version: settings_version,
-        RightToLeft: {
-            enabled: true
-        },
-        DoublePageView: {
-            enabled: true,
-            offsetPage: true
-        }
-    }
-}
-
+var settings = null
 var chapter_data = {
-    id: window.location.pathname.split('/')[1],
+    id: null,
     page_count: null,
     pages: {},
     current: null
 }
 
-if (chapter_data.id == undefined) {
-    alert("You need to add a chapter number after the /")
-    //window.location.href = 'https://komi.zip/'
+const getChapterIDFromURL = function() {
+    var url_reverse = window.location.href.split("").reverse().join("")
+    var chapter_id = ""
+    for (i = 0; i < url_reverse.length; i++) {
+        if (new RegExp("[0-9]").test(url_reverse[i])) {
+            chapter_id = url_reverse[i] + chapter_id
+        } else {
+            break
+        }
+    }
+    return chapter_id
 }
 
-const handlePageClick = function(event){
-    if (!event.target.classList.contains('m-hidden')) {
-        
-        quarter_width = event.target.clientWidth / 4
-        
-        if (settings.DoublePageView.current) {
-            if (!isImageOnLeft(event.target.classList['page'])) {
-                if (event.offsetX > quarter_width * 3) {
-                    if (settings.RightToLeft.enabled) {
-                        changePage("+")
-                    } else {
-                        changePage("-")
-                    }
-                }
-            } else {
-                if (event.offsetX < quarter_width) {
-                    if (settings.RightToLeft.enabled) {
-                        changePage("-")
-                    } else {
-                        changePage("+")
-                    }
-                }
-            }
+const handlePageClick = function(event){ 
+    third_width = window.screen.width / 3
+    
+    // right side click
+    console.log("[handlePageClick]", {"offsetX": event.pageX, third_width, "third*2": third_width * 2})
+    if (event.pageX > third_width * 2) {
+        if (settings.RightToLeft.enabled) {
+            changePage("-")
         } else {
-            if (event.offsetX < quarter_width) {
-                if (settings.RightToLeft.enabled) {
-                    changePage("+")
-                } else {
-                    changePage("-")
-                }
-            } else if (event.offsetX > quarter_width * 3) {
-                if (settings.RightToLeft.enabled) {
-                    changePage("-")
-                } else {
-                    changePage("+")
-                }
-            }
+            changePage("+")
+        }
+    // left side click
+    } else if (event.pageX < third_width) {
+        if (settings.RightToLeft.enabled) {
+            changePage("+")
+        } else {
+            changePage("-")
         }
     }
 }
@@ -75,11 +47,6 @@ const addLeadingZero = function(number) {
     } else {
         return number.toString();
     }
-}
-
-const isImageOnLeft = function(pagenum) {
-    const imgElements = $('.manga-area img:not(.m-hidden)');
-    return imgElements.index(`[page="${pagenum}"]`) == 0
 }
 
 const changePage = function(direction) {
@@ -102,6 +69,7 @@ const changePage = function(direction) {
             chapter_data.current = 1
         }
     }
+    console.log('[changePage]', {"change": change, "direction": direction})
     updatePages()
 }
 
@@ -144,10 +112,18 @@ const updatePages = function() {
             all_pages.eq(i).addClass("m-hidden");
         }
     }
+    console.log("[updatePages] executed", {allowed_pages})
     updateProgress()
 }
 
+const saveSettings = function() {
+    localStorage.setItem('view_settings', JSON.stringify(settings))
+    console.log("[saveSettings]", settings)
+}
+
 const toggleSetting = function(input) {
+    console.log("[toggleSetting]", input)
+    
     if (input == 'rtl') {
         $('.manga-area').append($('.manga-area img').get().reverse());
         
@@ -205,10 +181,10 @@ const toggleSetting = function(input) {
     }
     
     updatePages()
-    localStorage.setItem('view_settings', JSON.stringify(settings))
+    saveSettings()
 }
 
-const updateProgress = function() {
+const updateProgress = function() {    
     var page_value = 100 / chapter_data.page_count
     var pages = $('.manga-area img:not(.m-hidden)')
     var pages_visible = []
@@ -273,6 +249,7 @@ const updateProgress = function() {
             'float': 'left',
         })
     }
+    console.log("[updateProgress] executed")
 }
 
 const arrowKeyTrigger = function(e) {
@@ -280,6 +257,7 @@ const arrowKeyTrigger = function(e) {
 
     if (e.keyCode == '37') {
         // left arrow
+        console.log("[arrowKeyTrigger] left key trigger")
         if (settings.RightToLeft.enabled) {
             changePage('+')
         } else {
@@ -288,61 +266,13 @@ const arrowKeyTrigger = function(e) {
     }
     else if (e.keyCode == '39') {
         // right arrow
+        console.log("[arrowKeyTrigger] right key trigger")
         if (settings.RightToLeft.enabled) {
             changePage('-')
         } else {
             changePage('+')
         }
     }
-}
-
-const arrowClick = function(arrow) {
-    if (arrow == 'l') {
-        if (settings.RightToLeft.enabled) {
-            changePage('+')
-        } else {
-            changePage('-')
-        }
-    } else {
-        if (settings.RightToLeft.enabled) {
-            changePage('-')
-        } else {
-            changePage('+')
-        }
-    }
-}
-
-const init = function() {
-    $('#chapter-span').text(`Chapter ${chapter_data.id}`)
-    document.title = `Chapter ${chapter_data.id} | komi.zip`
-    axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}-01.jpg`)
-        .then(response => {
-            chapter_data.page_count = parseInt(response.headers['x-page-count']);
-            
-            for (let i = 1; i <= chapter_data.page_count; i++) {
-                var imgElement = $('<img>');
-                var imgID = addLeadingZero(i)
-                imgElement.attr('src', `https://cdn.komi.zip/cdn/${chapter_data.id}-${imgID}.jpg`);
-                imgElement.attr('class', 'manga-image m-hidden')
-                imgElement.on('click', handlePageClick)
-                imgElement.attr('page', i)
-                $('.manga-area').append(imgElement);
-            }
-
-            chapter_data.current = 1
-            toggleSetting("startup")
-            updatePages()
-            
-        })
-        .catch(error => {
-            if (error.response.status) {
-                alert("Chapter was not found.")
-                //window.location.href = "https://komi.zip/"
-            } else {
-                alert("Failed to load chapter, view console for more info.")
-                console.error('Error occurred during the request:', error);
-            }
-        });
 }
 
 const toggleHelp = function() {
@@ -353,9 +283,78 @@ const toggleHelp = function() {
         $('#info-span').html("How to Use")
         $('#info-div').addClass("m-hidden")
     }
+    console.log("[toggleHelp] executed")
 }
 
-$(document).keydown(arrowKeyTrigger)
-$(window).resize(updateProgress)
+const init = function() {
+    feather.replace()
+    $(document).keydown(arrowKeyTrigger)
+    $(window).resize(updateProgress)
+    $('.manga-area').on('click', handlePageClick)
+    $('.arrow-left').on('click', handlePageClick)
+    $('.arrow-right').on('click', handlePageClick)
+
+    settings = localStorage.getItem('view_settings') ? JSON.parse(localStorage.getItem('view_settings')) : '';
+    console.log("[init] js settings_version =", settings_version)
+    console.log("[init] saved settings_version =", settings._version)
+
+    if (settings == "" || settings._version != settings_version) {
+        settings = {
+            _version: settings_version,
+            RightToLeft: {
+                enabled: true
+            },
+            DoublePageView: {
+                enabled: true,
+                offsetPage: true
+            }
+        }
+        console.log("[init] using default settings:", settings)
+    } else {
+        console.log("[init] using saved settings:", settings)
+    }
+    
+    chapter_data.id = getChapterIDFromURL()
+    
+    if (chapter_data.id == undefined) {
+        alert("You need to add a chapter number after the /")
+        window.location.href = 'https://komi.zip/'
+    }
+    
+    $('#chapter-span').text(`Chapter ${chapter_data.id}`)
+    document.title = `Chapter ${chapter_data.id} | komi.zip`
+    console.log("[init] subheading + title updated")
+
+    axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}-01.jpg`)
+        .then(response => {
+            chapter_data.page_count = parseInt(response.headers['x-page-count']);
+            console.log("[init] chapter is valid", {"response_code": response.status, "page_count": chapter_data.page_count, "response": response})
+
+            for (let i = 1; i <= chapter_data.page_count; i++) {
+                var imgElement = $('<img>');
+                var imgID = addLeadingZero(i)
+                imgElement.attr('src', `https://cdn.komi.zip/cdn/${chapter_data.id}-${imgID}.jpg`);
+                imgElement.attr('class', 'manga-image m-hidden')
+                imgElement.attr('page', i)
+                $('.manga-area').append(imgElement);
+            }
+            console.log("[init] img elements inserted")
+
+            chapter_data.current = 1
+            toggleSetting("startup")
+            updatePages()
+            
+        })
+        .catch(error => {
+            console.error('[init]', error)
+            if (error.response.status) {
+                alert("Chapter was not found.")
+                //window.location.href = "https://komi.zip/"
+            } else {
+                alert("Failed to load chapter, view console for more info.")
+                console.error('Error occurred during the request:', error);
+            }
+        });
+}
 
 init()

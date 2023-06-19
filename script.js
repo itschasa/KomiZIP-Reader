@@ -5,7 +5,8 @@ var chapter_data = {
     page_count: null,
     pages: {},
     current: null,
-    title: null
+    title: null,
+    _x_metadata: null
 }
 
 const getChapterIDFromURL = function() {
@@ -319,7 +320,7 @@ const init = function() {
     
     if (chapter_data.id == undefined) {
         alert("You need to add a chapter number after the /")
-        //window.location.href = 'https://komi.zip/'
+        window.location.href = 'https://komi.zip/'
     }
     
     $('#chapter-span').text(`Chapter ${chapter_data.id}`)
@@ -328,15 +329,17 @@ const init = function() {
 
     axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}`)
         .then(response => {
-            chapter_data.page_count = parseInt(response.headers['x-page-count']);
+            chapter_data._x_metadata = JSON.parse(response.headers['x-metadata'])
+            chapter_data.page_count = chapter_data._x_metadata.metadata.page_count
+            chapter_data.title = chapter_data._x_metadata.metadata.title
             
-            if (response.headers['x-chapter-title'] != "null" && response.headers['x-chapter-title'] != null) {
+            if (chapter_data.title != "null" && chapter_data.title != null) {
                 chapter_data.title = response.headers['x-chapter-title']
                 $('#chapter-span').text(`Chapter ${chapter_data.id}:`)
                 $('#title-span').text(`${chapter_data.title}`)
             }
             
-            console.log("[init] chapter is valid", {"response_code": response.status, "page_count": chapter_data.page_count, "title": chapter_data.title, "response": response})
+            console.log("[init] chapter is valid", {"response_code": response.status, "_x_metadata": chapter_data._x_metadata, "response": response})
 
             for (let i = 1; i <= chapter_data.page_count; i++) {
                 var imgElement = $('<img>');
@@ -357,7 +360,7 @@ const init = function() {
             console.error('[init]', error.message)
             if (error.response.status == 404) {
                 alert("Chapter was not found.")
-                //window.location.href = "https://komi.zip/"
+                window.location.href = "https://komi.zip/"
             } else {
                 alert("Failed to load chapter, view console for more info.")
             }

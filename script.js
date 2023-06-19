@@ -4,7 +4,8 @@ var chapter_data = {
     id: null,
     page_count: null,
     pages: {},
-    current: null
+    current: null,
+    title: null
 }
 
 const getChapterIDFromURL = function() {
@@ -318,7 +319,7 @@ const init = function() {
     
     if (chapter_data.id == undefined) {
         alert("You need to add a chapter number after the /")
-        window.location.href = 'https://komi.zip/'
+        //window.location.href = 'https://komi.zip/'
     }
     
     $('#chapter-span').text(`Chapter ${chapter_data.id}`)
@@ -328,7 +329,14 @@ const init = function() {
     axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}-01.jpg`)
         .then(response => {
             chapter_data.page_count = parseInt(response.headers['x-page-count']);
-            console.log("[init] chapter is valid", {"response_code": response.status, "page_count": chapter_data.page_count, "response": response})
+            
+            if (response.headers['x-chapter-title'] !== "null" || response.headers['x-chapter-title'] !== null) {
+                chapter_data.title = response.headers['x-chapter-title']
+                $('#chapter-span').text(`Chapter ${chapter_data.id}:`)
+                $('#title-span').text(`${chapter_data.title}`)
+            }
+            
+            console.log("[init] chapter is valid", {"response_code": response.status, "page_count": chapter_data.page_count, "title": chapter_data.title, "response": response})
 
             for (let i = 1; i <= chapter_data.page_count; i++) {
                 var imgElement = $('<img>');
@@ -346,10 +354,10 @@ const init = function() {
             
         })
         .catch(error => {
-            console.error('[init]', error)
+            console.error('[init]', error.message)
             if (error.response.status == 404) {
                 alert("Chapter was not found.")
-                window.location.href = "https://komi.zip/"
+                //window.location.href = "https://komi.zip/"
             } else {
                 alert("Failed to load chapter, view console for more info.")
             }

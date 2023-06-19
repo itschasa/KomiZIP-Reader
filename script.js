@@ -330,7 +330,7 @@ const init = function() {
         .then(response => {
             chapter_data.page_count = parseInt(response.headers['x-page-count']);
             
-            if (response.headers['x-chapter-title'] != "null" || response.headers['x-chapter-title'] != null) {
+            if (response.headers['x-chapter-title'] != "null" && response.headers['x-chapter-title'] != null) {
                 chapter_data.title = response.headers['x-chapter-title']
                 $('#chapter-span').text(`Chapter ${chapter_data.id}:`)
                 $('#title-span').text(`${chapter_data.title}`)

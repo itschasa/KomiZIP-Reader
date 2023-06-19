@@ -326,7 +326,7 @@ const init = function() {
     document.title = `Chapter ${chapter_data.id} | komi.zip`
     console.log("[init] subheading + title updated")
 
-    axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}-01.jpg`)
+    axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}`)
         .then(response => {
             chapter_data.page_count = parseInt(response.headers['x-page-count']);
             

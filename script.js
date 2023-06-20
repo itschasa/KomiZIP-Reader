@@ -14,7 +14,7 @@ const getChapterIDFromURL = function() {
     var url_reverse = window.location.href.split("").reverse().join("")
     var chapter_id = ""
     for (i = 0; i < url_reverse.length; i++) {
-        if (new RegExp("[0-9]").test(url_reverse[i])) {
+        if (new RegExp("[0-9.]").test(url_reverse[i])) {
             chapter_id = url_reverse[i] + chapter_id
         } else {
             break
@@ -401,7 +401,6 @@ const init = function() {
             chapter_data.title = chapter_data._x_metadata.metadata.title
             
             if (chapter_data.title != "null" && chapter_data.title != null) {
-                chapter_data.title = response.headers['x-chapter-title']
                 $('#chapter-span').text(`Chapter ${chapter_data.id}:`)
                 $('#title-span').text(`${chapter_data.title}`)
             }

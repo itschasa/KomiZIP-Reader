@@ -15,7 +15,7 @@
     </head>
     
     <body>
-        <div class="row m-0 w-100 text-center mb-2 header">
+        <div class="row m-0 w-100 mb-2 header text-center">
             <div class="col-12 mb-3">
                 <a href="https://komi.zip/" target="_blank">
                     <img src="logo.webp" class="logo-img" alt="komi.zip logo">
@@ -38,6 +38,7 @@
                     <span id="title-span"></span>
                 </span>
             </div>
+            
             <div class="col-12 m-hidden mb-4" id="info-div">
                 <span class="text">
                     To change page, either use the arrow keys, or click/tap on the left or right side of the page.<br>
@@ -45,25 +46,40 @@
                     (Offset Page can only be used with Double Page enabled)
                 </span>
             </div>
-            <div class="col mb-2">
+            
+            <div class="col-4 mb-2 px-1">
                 <div class="setting-disabled m-1" setting="rtl" onclick="toggleSetting('rtl')">
                     <i data-feather="arrow-left-circle"></i>
                     <br>
                     <span>Right to Left</span>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-4 mb-2 px-1">
                 <div class="setting-disabled m-1" setting="dp" onclick="toggleSetting('dp')">
                     <i data-feather="book-open"></i>
                     <br>
                     <span>Double Page</span>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-4 mb-2 px-1">
                 <div class="setting-notallowed m-1" setting="op" onclick="toggleSetting('op')">
                     <i data-feather="scissors"></i>
                     <br>
                     <span>Offset Page</span>
+                </div>
+            </div>
+            
+            <div class="col-6 text-muted mb-2 mt-2 px-1" onclick="newChapter('left')" id="left-chapter">
+                <div class="float-start" style="width: fit-content; margin-left: 5vw">
+                    <i class="align-middle" data-feather="arrow-left"></i>
+                    <span class="align-middle" id="left-chapter-text">Previous Chapter</span>
+                </div>
+            </div>
+
+            <div class="col-6 text-muted mb-2 mt-2 px-1" onclick="newChapter('right')" id="right-chapter">
+                <div class="float-end" style="width: fit-content; margin-right: 5vw">
+                    <span class="align-middle" id="right-chapter-text">Next Chapter</span>
+                    <i class="align-middle" data-feather="arrow-right"></i>
                 </div>
             </div>
         </div>

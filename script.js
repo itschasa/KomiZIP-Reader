@@ -6,7 +6,8 @@ var chapter_data = {
     pages: {},
     current: null,
     title: null,
-    _x_metadata: null
+    _x_metadata: null,
+    _x_chapters: null
 }
 
 const getChapterIDFromURL = function() {
@@ -132,9 +133,13 @@ const toggleSetting = function(input) {
         if (settings.RightToLeft.enabled) {
             settings.RightToLeft.enabled = false
             $('div[setting="rtl"]').addClass("setting-disabled").removeClass("setting-enabled")
+            $('#right-chapter-text').text('Next Chapter')
+            $('#left-chapter-text').text('Previous Chapter')
         } else {
             settings.RightToLeft.enabled = true
             $('div[setting="rtl"]').addClass("setting-enabled").removeClass("setting-disabled")
+            $('#right-chapter-text').text('Previous Chapter')
+            $('#left-chapter-text').text('Next Chapter')
         }
     
     } else if (input == "dp") {
@@ -165,8 +170,12 @@ const toggleSetting = function(input) {
         if (settings.RightToLeft.enabled) {
             $('.manga-area').append($('.manga-area img').get().reverse());
             $('div[setting="rtl"]').addClass("setting-enabled").removeClass("setting-disabled")
+            $('#right-chapter-text').text('Previous Chapter')
+            $('#left-chapter-text').text('Next Chapter')
         } else {
             $('div[setting="rtl"]').addClass("setting-disabled").removeClass("setting-enabled")
+            $('#right-chapter-text').text('Next Chapter')
+            $('#left-chapter-text').text('Previous Chapter')
         }
 
         if (settings.DoublePageView.enabled) {
@@ -183,6 +192,7 @@ const toggleSetting = function(input) {
     }
     
     updatePages()
+    redirectChapter('c')
     saveSettings()
 }
 
@@ -288,6 +298,62 @@ const toggleHelp = function() {
     console.log("[toggleHelp] executed")
 }
 
+const redirectChapter = function(direction) {
+    if (direction == '+') {
+        if (chapter_data._x_chapters.indexOf(chapter_data.id) != 0) {
+            window.location.href = `https://read.komi.zip/${chapter_data._x_chapters[chapter_data._x_chapters.indexOf(chapter_data.id) - 1]}`
+        }
+    } else if (direction == '-') {
+        if (chapter_data._x_chapters.indexOf(chapter_data.id) != chapter_data._x_chapters.length - 1) {
+            window.location.href = `https://read.komi.zip/${chapter_data._x_chapters[chapter_data._x_chapters.indexOf(chapter_data.id) + 1]}`
+        }
+    } else {
+        if (chapter_data._x_chapters.indexOf(chapter_data.id) != 0) {
+            if (settings.RightToLeft.enabled) {
+                $('#left-chapter').addClass('text').removeClass('text-muted')
+            } else {
+                $('#right-chapter').addClass('text').removeClass('text-muted')
+            }
+        } else {
+            if (settings.RightToLeft.enabled) {
+                $('#left-chapter').addClass('text-muted').removeClass('text')
+            } else {
+                $('#right-chapter').addClass('text-muted').removeClass('text')
+            }
+        }
+        
+        if (chapter_data._x_chapters.indexOf(chapter_data.id) != chapter_data._x_chapters.length - 1) {
+            if (!settings.RightToLeft.enabled) {
+                $('#left-chapter').addClass('text').removeClass('text-muted')
+            } else {
+                $('#right-chapter').addClass('text').removeClass('text-muted')
+            }
+        } else {
+            if (!settings.RightToLeft.enabled) {
+                $('#left-chapter').addClass('text-muted').removeClass('text')
+            } else {
+                $('#right-chapter').addClass('text-muted').removeClass('text')
+            }
+        }
+    }
+}
+
+const newChapter = function(direction) {
+    if (direction == 'left') {
+        if (settings.RightToLeft.enabled) {
+            redirectChapter('+')
+        } else {
+            redirectChapter('-')
+        }
+    } else {
+        if (settings.RightToLeft.enabled) {
+            redirectChapter('-')
+        } else {
+            redirectChapter('+')
+        }
+    }
+}
+
 const init = function() {
     feather.replace()
     $(document).keydown(arrowKeyTrigger)
@@ -330,6 +396,7 @@ const init = function() {
     axios.head(`https://cdn.komi.zip/cdn/${chapter_data.id}`)
         .then(response => {
             chapter_data._x_metadata = JSON.parse(response.headers['x-metadata'])
+            chapter_data._x_chapters = JSON.parse(response.headers['x-chapters'])
             chapter_data.page_count = chapter_data._x_metadata.metadata.page_count
             chapter_data.title = chapter_data._x_metadata.metadata.title
             
@@ -360,7 +427,7 @@ const init = function() {
             console.error('[init]', error.message)
             if (error.response.status == 404) {
                 alert("Chapter was not found.")
-                window.location.href = "https://komi.zip/"
+                //window.location.href = "https://komi.zip/"
             } else {
                 alert("Failed to load chapter, view console for more info.")
             }
